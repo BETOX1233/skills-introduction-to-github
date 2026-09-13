@@ -8,6 +8,8 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { rotatePoint } from "./lib/geometry";
+import { Sparkles } from "./lib/Sparkles";
 
 // ---------------------------------------------------------------------------
 // Config
@@ -24,19 +26,6 @@ const GOLD = "#FFD84D";
 
 // One full stride cycle (both legs) in frames.
 const STRIDE_FRAMES = 24;
-const DEG = Math.PI / 180;
-
-function rotatePoint(
-  origin: { x: number; y: number },
-  length: number,
-  angleDeg: number,
-) {
-  const rad = angleDeg * DEG;
-  return {
-    x: origin.x + length * Math.sin(rad),
-    y: origin.y + length * Math.cos(rad),
-  };
-}
 
 // ---------------------------------------------------------------------------
 // Shared neon glow filter (referenced by every glowing element on the page)
@@ -354,46 +343,6 @@ const FloorGrid: React.FC<{ frame: number }> = ({ frame }) => {
     </svg>
   );
 };
-
-// ---------------------------------------------------------------------------
-// Twinkling sparkles
-// ---------------------------------------------------------------------------
-
-const Sparkles: React.FC<{ frame: number; count?: number }> = ({
-  frame,
-  count = 26,
-}) => (
-  <AbsoluteFill>
-    {Array.from({ length: count }).map((_, i) => {
-      const x = random(`sx-${i}`) * 100;
-      const y = random(`sy-${i}`) * 55;
-      const period = 40 + random(`sp-${i}`) * 60;
-      const offset = random(`so-${i}`) * period;
-      const opacity = interpolate(
-        (frame + offset) % period,
-        [0, period / 2, period],
-        [0.1, 0.9, 0.1],
-      );
-      const size = 2 + random(`ss-${i}`) * 3;
-      return (
-        <div
-          key={i}
-          style={{
-            position: "absolute",
-            left: `${x}%`,
-            top: `${y}%`,
-            width: size,
-            height: size,
-            borderRadius: "50%",
-            background: "#fff",
-            opacity,
-            boxShadow: "0 0 6px 2px rgba(255,255,255,0.8)",
-          }}
-        />
-      );
-    })}
-  </AbsoluteFill>
-);
 
 // ---------------------------------------------------------------------------
 // Neon sign title
